@@ -207,6 +207,20 @@ class WorkspaceFeatureOverrideRequest(BaseModel):
     value: bool | int
 
 
+
+class WorkspaceFeatureOverrideItem(BaseModel):
+    flag_key: str
+    raw_value: str
+    parsed_value: bool | int | None
+    updated_by: str
+    updated_at: str
+
+
+class WorkspaceFeatureOverrideListResponse(BaseModel):
+    workspace_id: str
+    items: List[WorkspaceFeatureOverrideItem]
+
+
 class SocialAccountConnectRequest(BaseModel):
     platform: str
     account_handle: str

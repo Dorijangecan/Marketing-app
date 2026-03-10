@@ -4,6 +4,7 @@ from ..core.dependencies import get_current_user_id
 from ..schemas import (
     FeatureFlagsResponse,
     WorkspaceCreateRequest,
+    WorkspaceFeatureOverrideListResponse,
     WorkspaceFeatureOverrideRequest,
     WorkspaceMemberResponse,
     WorkspaceMemberUpsertRequest,
@@ -79,6 +80,39 @@ def set_workspace_feature_override(
             workspace_id=workspace_id,
             flag_key=payload.flag_key,
             value=payload.value,
+            user_id=user_id,
+        )
+    except PermissionError as exc:
+        raise HTTPException(status_code=403, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return FeatureFlagsResponse(**result)
+
+
+@router.get("/{workspace_id}/features/overrides", response_model=WorkspaceFeatureOverrideListResponse)
+def list_workspace_feature_overrides(
+    workspace_id: str,
+    user_id: str = Depends(get_current_user_id),
+) -> WorkspaceFeatureOverrideListResponse:
+    try:
+        result = feature_service.list_workspace_feature_overrides(workspace_id=workspace_id, user_id=user_id)
+    except PermissionError as exc:
+        raise HTTPException(status_code=403, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    return WorkspaceFeatureOverrideListResponse(**result)
+
+
+@router.delete("/{workspace_id}/features/overrides/{flag_key}", response_model=FeatureFlagsResponse)
+def clear_workspace_feature_override(
+    workspace_id: str,
+    flag_key: str,
+    user_id: str = Depends(get_current_user_id),
+) -> FeatureFlagsResponse:
+    try:
+        result = feature_service.clear_workspace_feature_override(
+            workspace_id=workspace_id,
+            flag_key=flag_key,
             user_id=user_id,
         )
     except PermissionError as exc:

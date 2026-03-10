@@ -1307,3 +1307,49 @@ def test_feature_flag_int_override_ignores_non_positive_raw_value() -> None:
 
     features = flags.get_workspace_features(workspace["workspace_id"], owner["user_id"])
     assert features["features"]["max_social_accounts"] == 3
+
+
+def test_feature_flag_override_list_and_clear_flow() -> None:
+    reset_db()
+
+    auth = AuthService()
+    workspace_service = WorkspaceService()
+    flags = FeatureFlagService()
+
+    owner = auth.signup("owner-override-list@example.com", "password123", "Owner Override List")
+    workspace = workspace_service.create_workspace(owner["user_id"], "Override List WS", "Marketing", "Starter")
+
+    flags.set_workspace_feature_override(
+        workspace_id=workspace["workspace_id"],
+        flag_key="trend_analysis",
+        value=True,
+        user_id=owner["user_id"],
+    )
+
+    listed = flags.list_workspace_feature_overrides(workspace["workspace_id"], owner["user_id"])
+    assert len(listed["items"]) == 1
+    assert listed["items"][0]["flag_key"] == "trend_analysis"
+    assert listed["items"][0]["parsed_value"] is True
+
+    cleared = flags.clear_workspace_feature_override(workspace["workspace_id"], "trend_analysis", owner["user_id"])
+    assert cleared["features"]["trend_analysis"] is False
+
+    listed_after = flags.list_workspace_feature_overrides(workspace["workspace_id"], owner["user_id"])
+    assert listed_after["items"] == []
+
+
+def test_feature_flag_clear_override_rejects_missing_key() -> None:
+    reset_db()
+
+    auth = AuthService()
+    workspace_service = WorkspaceService()
+    flags = FeatureFlagService()
+
+    owner = auth.signup("owner-override-clear-missing@example.com", "password123", "Owner Override Missing")
+    workspace = workspace_service.create_workspace(owner["user_id"], "Override Missing WS", "Marketing", "Starter")
+
+    try:
+        flags.clear_workspace_feature_override(workspace["workspace_id"], "trend_analysis", owner["user_id"])
+        assert False, "Expected ValueError"
+    except ValueError as exc:
+        assert "not found" in str(exc)

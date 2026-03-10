@@ -48,6 +48,8 @@ Protected (`Authorization: Bearer <token>`):
 - `POST /v1/workspaces`
 - `GET /v1/workspaces`
 - `POST /v1/workspaces/{workspace_id}/features/overrides`
+- `GET /v1/workspaces/{workspace_id}/features/overrides`
+- `DELETE /v1/workspaces/{workspace_id}/features/overrides/{flag_key}`
 - `POST /v1/campaigns`
 - `GET /v1/campaigns/{workspace_id}`
 - `POST /v1/experiments`
