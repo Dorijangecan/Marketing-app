@@ -100,6 +100,9 @@ class FeatureFlagService:
                     continue
             elif isinstance(current, int):
                 try:
-                    features[key] = int(raw)
+                    parsed = int(raw)
                 except ValueError:
                     continue
+                if parsed <= 0:
+                    continue
+                features[key] = parsed

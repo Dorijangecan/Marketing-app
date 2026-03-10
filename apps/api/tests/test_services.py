@@ -1287,3 +1287,23 @@ def test_feature_flag_bool_override_ignores_invalid_raw_value() -> None:
 
     features = flags.get_workspace_features(workspace["workspace_id"], owner["user_id"])
     assert features["features"]["trend_analysis"] is False
+
+
+def test_feature_flag_int_override_ignores_non_positive_raw_value() -> None:
+    reset_db()
+
+    auth = AuthService()
+    workspace_service = WorkspaceService()
+    flags = FeatureFlagService()
+
+    owner = auth.signup("owner-override-int-raw@example.com", "password123", "Owner Override Int Raw")
+    workspace = workspace_service.create_workspace(owner["user_id"], "Override Int Raw WS", "Marketing", "Pro")
+
+    with get_connection() as conn:
+        conn.execute(
+            "INSERT INTO feature_flag_overrides(workspace_id, flag_key, flag_value, updated_by, updated_at) VALUES (?, ?, ?, ?, ?)",
+            (workspace["workspace_id"], "max_social_accounts", "0", owner["user_id"], "2026-01-01T00:00:00Z"),
+        )
+
+    features = flags.get_workspace_features(workspace["workspace_id"], owner["user_id"])
+    assert features["features"]["max_social_accounts"] == 3
