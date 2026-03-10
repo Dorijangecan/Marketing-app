@@ -1,0 +1,82 @@
+:root {
+  --bg: #0b1020;
+  --surface: #141b34;
+  --muted: #9bb0d3;
+  --text: #f5f7ff;
+  --accent: #5a8cff;
+  --ok: #3fd6a1;
+}
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: #10172e;
+  border-bottom: 1px solid #223057;
+}
+.badge {
+  background: var(--accent);
+  color: white;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+}
+.layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 1rem;
+  padding: 1rem;
+}
+.sidebar, .card {
+  background: var(--surface);
+  border: 1px solid #25365f;
+  border-radius: 12px;
+}
+.sidebar {
+  padding: 1rem;
+}
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  color: var(--muted);
+}
+.sidebar li {
+  margin: 0.6rem 0;
+}
+.content {
+  display: grid;
+  gap: 1rem;
+}
+.card {
+  padding: 1rem;
+}
+label {
+  display: block;
+  margin-top: 0.8rem;
+  color: var(--muted);
+}
+input, select {
+  width: 100%;
+  margin-top: 0.35rem;
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: 1px solid #30446f;
+  background: #0f1730;
+  color: var(--text);
+}
+button {
+  margin-top: 1rem;
+  background: var(--accent);
+  border: none;
+  color: white;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.success { border-color: var(--ok); }
